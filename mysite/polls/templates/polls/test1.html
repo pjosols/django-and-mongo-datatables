@@ -1,0 +1,57 @@
+{% extends "core/base.html" %}
+{% load staticfiles %}
+
+    <!-- CSS -->
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{% static '/DataTables/datatables.min.css' %}"/>
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+    </style>
+    {% endblock stylesheets %}
+
+{% block content %}
+{{ block.super }}
+
+<div class="container">
+
+    <div class="container">{% csrf_token %}
+
+        <h1 id="collection">{{ collection }}</h1>
+
+        <div class="row text-monospace">
+            <div class="col-12">
+
+                {% for doc in test_docs %}
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        doc.object2 is <strong class="text-primary">{{ doc.object2 }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        doc.object2.key_1 is <strong class="text-primary">{{ doc.object2.key_1 }}</strong>
+                    </li>
+                    <li class="list-group-item">
+                        doc.object2.key_1.key_b is <strong class="text-primary">{{ doc.object2.key_1.key_b }}</strong>
+                    </li>
+                </ul>
+                {% endfor %}
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
+
+{% block scripts%}
+<script type="text/javascript" src="{% static '/DataTables/datatables.min.js' %}"></script>
+{{ block.super }}
+{% endblock scripts %}
+
+

@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+{% load staticfiles %}
+
+    <!-- CSS -->
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{% static '/DataTables/datatables.min.css' %}"/>
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+    </style>
+    {% endblock stylesheets %}
+
+{% block content %}
+{{ block.super }}
+
+<div class="container">
+
+    <div class="container">{% csrf_token %}
+
+        <h1 id="collection">{{ collection }}</h1>
+
+        <div class="main invisible table-responsive">
+
+            <table id="dt_table" class="table table-striped table-sm">
+                <thead>
+                <tr>
+                    {% for key in keys %}
+                        <th class="">{{ key }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
+{% block scripts%}
+<script type="text/javascript" src="{% static '/DataTables/datatables.min.js' %}"></script>
+<!-- CSRF protection for AJAX -->
+<!-- https://github.com/js-cookie/js-cookie/ -->
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+    <script>
+
+        //CSRF protection for AJAX
+        //https://docs.djangoproject.com/en/2.1/ref/csrf/
+        var csrftoken = Cookies.get('csrftoken');
+        console.log(csrftoken);
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        $(function () {
+
+            // Dynamically generate the columns for DataTable and the fields for Editor
+            var myCols = [];
+            var myFields = [];
+            var $myCollection = $('#collection').text();
+            $('table thead tr th').each(function () {
+                var $myName = $(this).text();
+                var myCol = {data: $myName, className: ''};
+                myCols.push(myCol);
+                var myField = {label: $myName, name: $myName};
+                myFields.push(myField);
+            });
+
+            // Editor
+            var editor = new $.fn.dataTable.Editor({
+                ajax: {
+                    url: '/editor/' + $myCollection + '/_id_',
+                    type: 'POST',
+                    data: function (args) {
+                        return {
+                            "args": JSON.stringify(args)
+                        };
+                    }
+                },
+                table: "#dt_table",
+                fields: myFields
+            });
+
+            // DataTable
+            var table = $('#dt_table').DataTable({
+                "bPaginate": true,
+                searchDelay: 200, // default for server-side is 400,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "pageLength": 10,
+                "initComplete": function () {
+                    $('.main').removeClass('invisible');
+                },
+                serverSide: true,
+                ajax: {
+                    url: '/datatables/' + $myCollection,
+                    dataSrc: 'data',
+                    type: 'POST',
+                    data: function (args) {
+                        return {
+                            "args": JSON.stringify(args)
+                        };
+                    }
+                },
+                select: true,
+                columns: myCols
+            });
+
+            // BUTTONS
+
+            new $.fn.dataTable.Buttons(table, [
+                {extend: "create", editor: editor},
+                {extend: "edit", editor: editor},
+                {extend: "remove", editor: editor},
+                {extend: "excel"},
+                {extend: "csv"},
+                {extend: "pdf"}
+            ]);
+
+            table.buttons().container()
+                    .appendTo($(table.table().container(), '.col-sm-6:eq(0)'));
+
+        });
+
+
+    </script>
+{% endblock scripts %}
+
+

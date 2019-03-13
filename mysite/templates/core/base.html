@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    {% load staticfiles %}
+
+    <!-- Title -->
+    <title>
+        {% block title %}Title{% endblock %}
+    </title>
+
+    <!-- CSS -->
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{% static '/DataTables/datatables.min.css' %}"/>
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+    </style>
+    {% endblock stylesheets %}
+
+</head>
+
+<body>
+
+<!-- Content -->
+{% block content %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Django and mongo-datatables</a>
+</nav>
+
+{% endblock content %}
+
+<!-- Scripts -->
+{% block scripts %}
+<script type="text/javascript" src="{% static '/DataTables/datatables.min.js' %}"></script>
+{% endblock scripts %}
+
+</body>
+</html>
