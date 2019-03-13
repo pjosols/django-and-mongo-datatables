@@ -29,7 +29,7 @@ SECRET_KEY = 'v_vv5)!x2-xs+i9x$oc9tc15fn&v#j!5r(wn683b+)kh6t!(j='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost:8001", "agile-headland-18656.herokuapp.com"]
+ALLOWED_HOSTS = ["localhost"]
 # APPEND_SLASH=False
 
 # Application definition
